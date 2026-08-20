@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cheese Booth — Together, Live</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,500;1,9..144,600&family=DM+Sans:wght@400;500;600;700&family=Caveat:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<h1 class="sr-only">Cheese Booth photobooth app</h1>
+
+<div class="wrap">
+  <header class="top">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 011 1v9a1 1 0 01-1 1H4a1 1 0 01-1-1V9a1 1 0 011-1z"/><circle cx="12" cy="13" r="3.5"/></svg>
+    cheese booth
+  </header>
+  
+  <div class="time-pill" id="timePill"></div>
+
+  <section class="hero">
+    <h1>Strike a pose,<br><em>print</em> a memory.</h1>
+    <p>Solo, squeezed into frame together, or live across the distance — four shots, one print.</p>
+  </section>
+
+  <div class="stage">
+    <div class="camera-panel">
+      <div class="viewfinder" id="viewfinder">
+        <div class="cam-half" id="mySide">
+          <video id="video" autoplay playsinline muted></video>
+          <div class="name-tag">You</div>
+        </div>
+        <div class="cam-half hidden" id="partnerSide">
+          <video id="partnerVideo" autoplay playsinline style="display:none;"></video>
+          <img id="partnerPhoto" alt="Partner" style="display:none;">
+          <div class="partner-empty" id="partnerEmpty">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20.8 4.6a5.5 5.5 0 00-7.8 0L12 5.6l-1-1a5.5 5.5 0 10-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 000-7.8z"/></svg>
+            <span>connect below to bring your partner in</span>
+          </div>
+          <div class="name-tag" id="partnerNameTag" contenteditable="true" spellcheck="false">Partner</div>
+        </div>
+
+        <div class="corner tl"></div><div class="corner tr"></div>
+        <div class="corner bl"></div><div class="corner br"></div>
+        <div class="rec-pill"><span class="dot"></span><span id="shotsLeft">4 shots left</span></div>
+        <div class="countdown" id="countdown">3</div>
+        <div class="hearts-burst" id="heartsBurst"></div>
+        <div class="flash" id="flash"></div>
+        <div class="cam-error" id="camError">
+          <p>We need camera access to open the booth. Allow it in your browser's address bar, then try again.</p>
+          <button class="btn" id="retryCam" type="button">Try again</button>
+        </div>
+      </div>
+
+      <div class="controls-row">
+        <div class="filters" id="filters"></div>
+      </div>
+
+      <div class="shutter-row">
+        <button class="flip-btn" id="flipBtn" type="button" aria-label="Flip your mirror">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 2.1l4 4-4 4"/><path d="M3 12.1v-2a4 4 0 014-4h14"/><path d="M7 21.9l-4-4 4-4"/><path d="M21 11.9v2a4 4 0 01-4 4H3"/></svg>
+        </button>
+        <button class="shutter" id="shutterBtn" type="button" aria-label="Take photo" disabled>
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#FFFDF8" stroke-width="2"><path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 011 1v9a1 1 0 01-1 1H4a1 1 0 01-1-1V9a1 1 0 011-1z"/><circle cx="12" cy="13" r="3"/></svg>
+          <span class="shutter-count" id="shutterCount">tap to capture</span>
+        </button>
+        <div style="width:42px;" aria-hidden="true"></div>
+      </div>
+
+      <div class="layout-select" id="layoutSelect">
+        <span>Layout</span>
+        <button type="button" class="chip active" data-layout="1x4">1x4 Strip</button>
+        <button type="button" class="chip" data-layout="2x2">2x2 Grid</button>
+      </div>
+
+      <div class="swatch-row" id="swatchRow">
+        <span>Paper</span>
+      </div>
+
+      <label class="sticker-toggle">
+        <input type="checkbox" id="stickerToggle">
+        add little hearts &amp; stars
+      </label>
+
+      <div class="mode-select" id="modeSelect">
+        <button type="button" class="chip mode-chip active" data-mode="photobooth">Photobooth</button>
+        <button type="button" class="chip mode-chip" data-mode="ldr">LDR Photobooth</button>
+      </div>
+
+      <div class="ldr-panel" id="ldrPanel" style="display:none;">
+        <p class="ldr-line">Your code: <strong id="myCode">connecting…</strong>
+          <button type="button" class="btn tiny" id="copyCode">Copy</button>
+        </p>
+        <div class="ldr-connect-row">
+          <input type="text" id="partnerCode" placeholder="Enter partner's code" autocomplete="off" inputmode="numeric">
+          <button type="button" class="btn tiny primary" id="connectBtn">Connect</button>
+        </div>
+        <p class="ldr-status" id="ldrStatus">Share your code with your partner, or paste theirs above.</p>
+        <div class="import-row">
+          <span>Can't get online together? Import a photo of them instead.</span>
+          <input type="file" accept="image/*" id="partnerFile" style="display:none;">
+          <button type="button" class="btn tiny" id="partnerFileBtn">Choose photo</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="strip-panel">
+      <div class="strip-frame" id="stripFrame">
+        <div class="tape"></div>
+        <div class="strip" id="strip">
+          <div class="perf left" id="perfLeft"></div>
+          <div class="perf right" id="perfRight"></div>
+          <div class="slots" id="slots"></div>
+          <div class="caption">cheese booth
+            <small id="dateStamp"></small>
+          </div>
+        </div>
+      </div>
+
+      <div class="strip-actions">
+        <button class="btn" id="retakeBtn" type="button">Retake</button>
+        <button class="btn primary" id="downloadBtn" type="button" disabled>Download strip</button>
+      </div>
+      <p class="hint" id="hint">Just you — strike a pose. Fill all four frames to unlock the download.</p>
+    </div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
